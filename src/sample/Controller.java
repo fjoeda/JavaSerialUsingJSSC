@@ -13,6 +13,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
 
@@ -40,6 +42,11 @@ public class Controller implements Initializable{
             serialPort = new SerialPort(PortName);
 
             serialPort.setParams(Integer.parseInt(BaudRate),8,1,0);
+            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN|SerialPort.FLOWCONTROL_RTSCTS_OUT);
+            int mask  = SerialPort.MASK_RXCHAR+SerialPort.MASK_CTS+SerialPort.MASK_DSR;
+            serialPort.setEventsMask(mask);
+            serialPort.addEventListener();
+
 
         }else{
 
@@ -59,4 +66,14 @@ public class Controller implements Initializable{
     public void appendText(String inputText){
         ConsoleText.setText(ConsoleText.getText()+inputText+System.lineSeparator());
     }
+
+
+    static class SerialPortReader implements SerialPortEventListener{
+
+        @Override
+        public void serialEvent(SerialPortEvent serialPortEvent) {
+
+        }
+    }
 }
+
