@@ -38,7 +38,7 @@ fx:controller="sample.Controller">
                   <Insets left="5.0" right="5.0" top="9.0" />
                </HBox.margin>
             </Label>
-            <ComboBox fx:id="PortList" prefWidth="150.0">
+            <ComboBox fx:id="PortList" prefWidth="150.0" onMouseEntered="#RefreshPortList">
                <HBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>
@@ -48,7 +48,7 @@ fx:controller="sample.Controller">
                   <Insets left="5.0" right="5.0" top="9.0" />
                </HBox.margin>
             </Label>
-            <ComboBox fx:id="BaudList" prefWidth="150.0">
+            <ComboBox fx:id="BaudList" prefWidth="150.0" >
                <HBox.margin>
                   <Insets left="5.0" right="5.0" top="5.0" />
                </HBox.margin>

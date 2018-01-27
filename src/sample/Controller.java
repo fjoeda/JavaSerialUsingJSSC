@@ -12,10 +12,8 @@ import javafx.scene.control.TextField;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import jssc.SerialPort;
-import jssc.SerialPortEvent;
-import jssc.SerialPortEventListener;
-import jssc.SerialPortException;
+import javafx.scene.input.MouseEvent;
+import jssc.*;
 
 
 public class Controller implements Initializable{
@@ -28,7 +26,7 @@ public class Controller implements Initializable{
     public ComboBox<String> BaudList;
     public Button ConnectButton;
 
-    public SerialPort serialPort;
+    public static SerialPort serialPort;
 
     private String PortName = null;
     private String BaudRate = "9600";
@@ -40,12 +38,29 @@ public class Controller implements Initializable{
 
         if(PortName != null){
             serialPort = new SerialPort(PortName);
-
+            serialPort.openPort();
             serialPort.setParams(Integer.parseInt(BaudRate),8,1,0);
             serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN|SerialPort.FLOWCONTROL_RTSCTS_OUT);
             int mask  = SerialPort.MASK_RXCHAR+SerialPort.MASK_CTS+SerialPort.MASK_DSR;
             serialPort.setEventsMask(mask);
-            serialPort.addEventListener();
+            serialPort.addEventListener(new SerialPortEventListener() {
+                @Override
+                public void serialEvent(SerialPortEvent event) {
+                    if(event.isRXCHAR()){
+                        try{
+                            if(event.isRXCHAR()){
+                                if(serialPort.readString()!= null){
+                                    appendText(serialPort.readString(32));
+
+
+                                }
+                            }
+                        }catch(SerialPortException e){
+
+                        }
+                    }
+                }
+            });
 
 
         }else{
@@ -60,6 +75,13 @@ public class Controller implements Initializable{
         PortList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> PortName = newValue);
         BaudList.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> BaudRate = newValue);
 
+        // Bukan kode yang layak ditiru
+        BaudList.getItems().add("4800");
+        BaudList.getItems().add("9600");
+        BaudList.getItems().add("9600");
+        BaudList.getItems().add("19200");
+        BaudList.getItems().add("115200");
+
 
     }
 
@@ -68,12 +90,14 @@ public class Controller implements Initializable{
     }
 
 
-    static class SerialPortReader implements SerialPortEventListener{
+    public void RefreshPortList(MouseEvent mouseEvent) {
 
-        @Override
-        public void serialEvent(SerialPortEvent serialPortEvent) {
-
+        String[] serialList = SerialPortList.getPortNames();
+        for(String str :serialList){
+            PortList.getItems().add(str);
+            System.out.println(str);
         }
+        System.out.println("Mouse Enterred");
     }
 }
 
